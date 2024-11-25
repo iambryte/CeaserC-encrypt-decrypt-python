@@ -1,17 +1,44 @@
-import itertools
-import hashlib
+def caesar_cipher(text, shift, mode='encrypt'):
+    result = ""
+    
+    # Adjust shift for decryption
+    if mode == 'decrypt':
+        shift = -shift
 
-def brute_force_password_cracker(target_hash, charset, max_length):
-    for length in range(1, max_length + 1):
-        for guess in itertools.product(charset, repeat=length):
-            guess_str = ''.join(guess)
-            if hashlib.md5(guess_str.encode()).hexdigest() == target_hash:
-                return f"Password found: {guess_str}"
-    return "Password not found"
+    for char in text:
+        # Encrypt/Decrypt uppercase letters
+        if char.isupper():
+            result += chr((ord(char) + shift - 65) % 26 + 65)
+        # Encrypt/Decrypt lowercase letters
+        elif char.islower():
+            result += chr((ord(char) + shift - 97) % 26 + 97)
+        # Non-alphabetic characters remain unchanged
+        else:
+            result += char
+            
+    return result
 
-# Example usage
-target_hash = "1da76f1041430a970fd6cc39fb20a797"  # Hash for the password
-charset = "abcdefghijklmnopqrstuvwxyz"
-max_length = 5
+def main():
+    print("Caesar Cipher Encoder/Decoder")
+    mode = input("Choose mode (encrypt/decrypt): ").strip().lower()
+    
+    if mode not in ['encrypt', 'decrypt']:
+        print("Invalid mode. Please choose 'encrypt' or 'decrypt'.")
+        return
+    
+    text = input("Enter the text: ")
+    shift = int(input("Enter the shift value (1-25): "))
+    
+    if shift < 1 or shift > 25:
+        print("Shift value must be between 1 and 25.")
+        return
+    
+    if mode == 'encrypt':
+        encrypted_text = caesar_cipher(text, shift, 'encrypt')
+        print(f"Encrypted Text: {encrypted_text}")
+    else:
+        decrypted_text = caesar_cipher(text, shift, 'decrypt')
+        print(f"Decrypted Text: {decrypted_text}")
 
-print(brute_force_password_cracker(target_hash, charset, max_length))
+if __name__ == "__main__":
+    main()
